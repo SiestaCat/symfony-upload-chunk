@@ -49,7 +49,7 @@ class File
     {
         $this->chunk_size = self::calculateChunkSize($this->size, self::CHUNK_SIZE_MIN, self::CHUNK_SIZE_MAX);
 
-        $this->parts_count = ceil($this->size / $this->chunk_size);
+        $this->parts_count = abs(ceil($this->size / $this->chunk_size));
     }
 
     private static function calculateChunkSize(int $size, int $min, int $max):int
