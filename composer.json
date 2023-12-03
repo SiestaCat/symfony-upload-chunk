@@ -1,0 +1,27 @@
+{
+    "name": "siestacat/upload-chunk-bundle",
+    "description": "",
+    "type": "symfony-bundle",
+    "require": {
+        "php": "^8.1",
+        "symfony/config": "^6.3 || ^7.0",
+        "symfony/dependency-injection": "^6.3 || ^7.0",
+        "symfony/yaml": "^6.4",
+        "symfony/form": "^6.4",
+        "doctrine/mongodb-odm-bundle": "^4.6",
+        "siestacat/unlink-clear-folder": "^1.0",
+        "symfony/validator": "6.3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Siestacat\\UploadChunkBundle\\": "src/"
+        }
+    },  
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco iosif Constantinescu",
+            "email": "marco.isfc@gmail.com"
+        }
+    ]
+}

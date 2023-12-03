@@ -1,0 +1,38 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Siestacat\UploadChunkBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones    
+    Siestacat\PhpFilesystemHash\FileSystem:
+        public: true
+    Siestacat\UploadChunkBundle\Validator\Request\Files\LimitValidator:
+        arguments:
+            $upload_max_files: '%upload_chunk.max_files%'
+    Siestacat\UploadChunkBundle\Validator\Request\Files\SizeValidator:
+        arguments:
+            $upload_max_bytes: '%upload_chunk.max_bytes%'
+    Siestacat\UploadChunkBundle\Service\Request\RequestUpload:
+        public: true
+        arguments:
+            $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
+    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestRepository:
+        arguments:
+            $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
+    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository:
+        arguments:
+            $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
+    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFilePartRepository:
+        arguments:
+            $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
+    Siestacat\UploadChunkBundle\Service\FetchDir:
+        arguments:
+            $tmp_path: '%upload_chunk.tmp_path%'
