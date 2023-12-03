@@ -4,12 +4,12 @@ namespace Siestacat\UploadChunkBundle\Service\Process;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormFactoryInterface;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFilePart;
+use Siestacat\UploadChunkBundle\Repository\FileRepository;
+use Siestacat\UploadChunkBundle\Document\File;
+use Siestacat\UploadChunkBundle\Document\FilePart;
 use Siestacat\UploadChunkBundle\Form\Process\ProcessType;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFilePartRepository;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestRepository;
+use Siestacat\UploadChunkBundle\Repository\FilePartRepository;
+use Siestacat\UploadChunkBundle\Repository\RequestRepository;
 use Siestacat\UploadChunkBundle\Service\DestroyRequest;
 use Siestacat\UploadChunkBundle\Service\Process\Data\ProcessInstance;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -24,9 +24,9 @@ class Process
     (
         private RequestStack $requestStack,
         private FormFactoryInterface $formFactory,
-        private UploadChunkRequestRepository $uploadChunkRequestRepository,
-        private UploadChunkRequestFileRepository $uploadChunkRequestFileRepository,
-        private UploadChunkRequestFilePartRepository $uploadChunkRequestFilePartRepository,
+        private RequestRepository $requestRepository,
+        private FileRepository $fileRepository,
+        private FilePartRepository $filePartRepository,
         private KernelInterface $kernel,
         private DestroyRequest $destroyRequestService
     )
@@ -50,9 +50,9 @@ class Process
             if($instance->form->isValid())
             {
 
-                $instance->request = $this->uploadChunkRequestRepository->findOneBy(['request_id' => $instance->data->request_id]);
+                $instance->request = $this->requestRepository->findOneBy(['request_id' => $instance->data->request_id]);
 
-                $instance->file = $this->uploadChunkRequestFileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
+                $instance->file = $this->fileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
 
                 $this->joinChunkedFiles($instance->file);
             }
@@ -73,11 +73,11 @@ class Process
 
     public function postProcess(ProcessInstance $instance):int
     {
-        $this->uploadChunkRequestFileRepository->deleteFile($instance->file);
-        $this->uploadChunkRequestFileRepository->documentManager->flush();
+        $this->fileRepository->deleteFile($instance->file);
+        $this->fileRepository->documentManager->flush();
 
         $files_pending_count =
-        $this->uploadChunkRequestFileRepository->documentManager->createQueryBuilder(UploadChunkRequestFile::class)
+        $this->fileRepository->documentManager->createQueryBuilder(File::class)
         ->field('request_id')->equals($instance->data->request_id)
         ->count()->getQuery()->execute();
 
@@ -92,11 +92,11 @@ class Process
         return self::POST_PROCESS_HAS_PENDING_FILES;
     }
 
-    private function joinChunkedFiles(UploadChunkRequestFile $file)
+    private function joinChunkedFiles(File $file)
     {
         $resource = fopen($file->tmp_path, 'wb');
 
-        foreach($this->uploadChunkRequestFilePartRepository->findBy(['request_id' => $file->request_id, 'file_native_id' => $file->file_id]) as $part)
+        foreach($this->filePartRepository->findBy(['request_id' => $file->request_id, 'file_native_id' => $file->file_id]) as $part)
         {
             $this->joinChunkedFilePart($resource, $part);
         }
@@ -104,7 +104,7 @@ class Process
         fclose($resource);
     }
 
-    private function joinChunkedFilePart($resource, UploadChunkRequestFilePart $part)
+    private function joinChunkedFilePart($resource, FilePart $part)
     {
         $resource_part = fopen($part->tmp_path, 'rb');
 

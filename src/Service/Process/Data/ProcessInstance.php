@@ -2,8 +2,8 @@
 
 namespace Siestacat\UploadChunkBundle\Service\Process\Data;
 
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequest;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
+use Siestacat\UploadChunkBundle\Document\Request;
+use Siestacat\UploadChunkBundle\Document\File;
 use Siestacat\UploadChunkBundle\Form\Process\Data\ProcessData;
 use Symfony\Component\Form\FormInterface;
 
@@ -11,9 +11,9 @@ class ProcessInstance
 {
     public ?ProcessData $data = null;
 
-    public ?UploadChunkRequestFile $file = null;
+    public ?File $file = null;
 
-    public ?UploadChunkRequest $request = null;
+    public ?Request $request = null;
 
     public function __construct(public FormInterface $form)
     {

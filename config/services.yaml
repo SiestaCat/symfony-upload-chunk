@@ -24,13 +24,13 @@ services:
         public: true
         arguments:
             $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
-    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestRepository:
+    Siestacat\UploadChunkBundle\Repository\RequestRepository:
         arguments:
             $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
-    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository:
+    Siestacat\UploadChunkBundle\Repository\FileRepository:
         arguments:
             $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
-    Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFilePartRepository:
+    Siestacat\UploadChunkBundle\Repository\FilePartRepository:
         arguments:
             $documentManager: '@doctrine_mongodb.odm.upload_chunk_document_manager'
     Siestacat\UploadChunkBundle\Service\FetchDir:

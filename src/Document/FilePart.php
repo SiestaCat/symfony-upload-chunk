@@ -2,13 +2,13 @@
 
 namespace Siestacat\UploadChunkBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFilePartRepository;
+use Siestacat\UploadChunkBundle\Repository\FilePartRepository;
 
-#[MongoDB\Document(collection: 'upload_chunk_request_file_part', repositoryClass: UploadChunkRequestFilePartRepository::class)]
+#[MongoDB\Document(collection: 'upload_chunk_request_file_part', repositoryClass: FilePartRepository::class)]
 #[MongoDB\HasLifecycleCallbacks]
 #[MongoDB\Index(['file_native_id'])]
 #[MongoDB\Index(['is_done'])]
-class UploadChunkRequestFilePart
+class FilePart
 {
 
     #[MongoDB\Id]

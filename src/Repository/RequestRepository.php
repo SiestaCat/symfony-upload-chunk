@@ -5,24 +5,24 @@ namespace Siestacat\UploadChunkBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequest;
+use Siestacat\UploadChunkBundle\Document\Request;
 
-class UploadChunkRequestRepository extends ServiceDocumentRepository
+class RequestRepository extends ServiceDocumentRepository
 {
 
-    public function __construct(public DocumentManager $documentManager, ManagerRegistry $registry, private UploadChunkRequestFilePartRepository $part_repository, private UploadChunkRequestFileRepository $file_repository)
+    public function __construct(public DocumentManager $documentManager, ManagerRegistry $registry, private FilePartRepository $filePartRepository, private FileRepository $fileRepository)
     {
-        parent::__construct($registry, UploadChunkRequest::class);
+        parent::__construct($registry, Request::class);
     }
 
     public function deleteCascade(string $request_id, int $clear_at = 10):void
     {
 
-        $this->part_repository->deleteByRequestId($request_id, $clear_at);
-        $this->file_repository->deleteByRequestId($request_id, $clear_at);
+        $this->filePartRepository->deleteByRequestId($request_id, $clear_at);
+        $this->fileRepository->deleteByRequestId($request_id, $clear_at);
 
         /**
-         * @var UploadChunkRequest
+         * @var Request
          */
         $request_document = $this->findOneBy(['request_id' => $request_id]);
 

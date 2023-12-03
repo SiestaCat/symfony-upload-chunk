@@ -2,7 +2,7 @@
 
 namespace Siestacat\UploadChunkBundle\Form\Request;
 
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
+use Siestacat\UploadChunkBundle\Document\File;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,7 +25,7 @@ class UploadRequestFileType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => UploadChunkRequestFile::class
+            'data_class' => File::class
         ]);
     }
 }

@@ -5,15 +5,15 @@ namespace Siestacat\UploadChunkBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFilePart;
+use Siestacat\UploadChunkBundle\Document\FilePart;
 use Siestacat\UnlinkNoEmptyFolder\ClearFolderAfterUnlink;
 
-class UploadChunkRequestFilePartRepository extends ServiceDocumentRepository
+class FilePartRepository extends ServiceDocumentRepository
 {
 
     public function __construct(public DocumentManager $documentManager, ManagerRegistry $registry)
     {
-        parent::__construct($registry, UploadChunkRequestFilePart::class);
+        parent::__construct($registry, FilePart::class);
     }
 
     public function checkExists(string $request_id, string $file_native_id, int $index):bool
@@ -21,7 +21,7 @@ class UploadChunkRequestFilePartRepository extends ServiceDocumentRepository
         return $this->fetchOne($request_id, $file_native_id, $index) !== null;
     }
 
-    public function fetchOne(string $request_id, string $file_native_id, int $index):?UploadChunkRequestFilePart
+    public function fetchOne(string $request_id, string $file_native_id, int $index):?FilePart
     {
         return $this->findOneBy(['request_id' => $request_id, 'file_native_id' => $file_native_id, 'index' => $index]);
     }
@@ -29,10 +29,10 @@ class UploadChunkRequestFilePartRepository extends ServiceDocumentRepository
     public function deleteByRequestId(string $request_id, int $clear_at):void
     {
         /**
-         * @var UploadChunkRequestFilePart[]
+         * @var FilePart[]
          */
         $iterator = 
-        $this->documentManager->createQueryBuilder(UploadChunkRequestFilePart::class)
+        $this->documentManager->createQueryBuilder(FilePart::class)
         ->select('id', 'tmp_path')
         ->field('request_id')->equals($request_id)
         ->getQuery()
@@ -60,7 +60,7 @@ class UploadChunkRequestFilePartRepository extends ServiceDocumentRepository
         $this->documentManager->clear();
     }
 
-    public function deletePart(?UploadChunkRequestFilePart $part):void
+    public function deletePart(?FilePart $part):void
     {
         if($part === null) return;
         if(is_file($part->tmp_path))

@@ -2,13 +2,13 @@
 
 namespace Siestacat\UploadChunkBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository;
+use Siestacat\UploadChunkBundle\Repository\FileRepository;
 
-#[MongoDB\Document(collection: 'upload_chunk_request_file', repositoryClass: UploadChunkRequestFileRepository::class)]
+#[MongoDB\Document(collection: 'upload_chunk_request_file', repositoryClass: FileRepository::class)]
 #[MongoDB\HasLifecycleCallbacks]
 #[MongoDB\Index(['request_id'])]
 #[MongoDB\Index(['file_id'])]
-class UploadChunkRequestFile
+class File
 {
 
     const CHUNK_SIZE_MIN = 1000000; //1MB

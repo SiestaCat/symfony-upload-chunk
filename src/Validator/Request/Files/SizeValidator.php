@@ -6,7 +6,7 @@ use Siestacat\BytesToHumanReadable\BytesToHumanReadable;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
+use Siestacat\UploadChunkBundle\Document\File;
 
 #[\Attribute]
 class SizeValidator extends ConstraintValidator
@@ -15,7 +15,7 @@ class SizeValidator extends ConstraintValidator
     public function __construct(private int $upload_max_bytes){}
 
     /**
-     * @param UploadChunkRequestFile[] $files 
+     * @param File[] $files 
      */
     public function validate(mixed $files, Constraint $constraint):void
     {

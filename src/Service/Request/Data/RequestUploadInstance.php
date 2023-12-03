@@ -2,15 +2,15 @@
 
 namespace Siestacat\UploadChunkBundle\Service\Request\Data;
 
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
+use Siestacat\UploadChunkBundle\Document\File;
 use Symfony\Component\Form\FormInterface;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequest;
+use Siestacat\UploadChunkBundle\Document\Request;
 
 class RequestUploadInstance
 {
     /**
      * 
-     * @var UploadChunkRequestFile[]
+     * @var File[]
      */
     public array $files = [];
 
@@ -20,7 +20,7 @@ class RequestUploadInstance
      */
     public array $response_parts = [];
 
-    public function __construct(public FormInterface $form, public UploadChunkRequest $request_document)
+    public function __construct(public FormInterface $form, public Request $request_document)
     {
         if(!$this->form->isSubmitted()) $this->form->submit([]);
 

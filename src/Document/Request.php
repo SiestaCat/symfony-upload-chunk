@@ -4,12 +4,12 @@ namespace Siestacat\UploadChunkBundle\Document;
 
 use DateTimeImmutable;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestRepository;
+use Siestacat\UploadChunkBundle\Repository\RequestRepository;
 
-#[MongoDB\Document(collection: 'upload_chunk_request', repositoryClass: UploadChunkRequestRepository::class)]
+#[MongoDB\Document(collection: 'upload_chunk_request', repositoryClass: RequestRepository::class)]
 #[MongoDB\HasLifecycleCallbacks]
 #[MongoDB\Index(['date_created'])]
-class UploadChunkRequest
+class Request
 {
     #[MongoDB\Id(strategy: 'none')]
     public string $request_id;

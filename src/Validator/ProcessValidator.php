@@ -5,7 +5,7 @@ namespace Siestacat\UploadChunkBundle\Validator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Siestacat\UploadChunkBundle\Form\Process\Data\ProcessData;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository;
+use Siestacat\UploadChunkBundle\Repository\FileRepository;
 use Siestacat\UploadChunkBundle\Service\RequestSession;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
@@ -15,7 +15,7 @@ class ProcessValidator extends ConstraintValidator
     public function __construct
     (
         private RequestSession $requestSessionService,
-        private UploadChunkRequestFileRepository $uploadChunkRequestFileRepository
+        private FileRepository $fileRepository
     ){}
 
     /**
@@ -30,7 +30,7 @@ class ProcessValidator extends ConstraintValidator
         if
         (
             !$this->requestSessionService->exists($data->request_id) ||
-            $this->uploadChunkRequestFileRepository->fetchOne($data->request_id, $data->file_id) === null
+            $this->fileRepository->fetchOne($data->request_id, $data->file_id) === null
 
         ) return $this->triggerAddViolation($constraint);
     }

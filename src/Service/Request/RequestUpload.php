@@ -2,15 +2,14 @@
 
 namespace Siestacat\UploadChunkBundle\Service\Request;
 
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequest;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFile;
 use Siestacat\UploadChunkBundle\Form\Request\UploadRequestType;
 use Siestacat\UploadChunkBundle\Service\Request\Data\RequestUploadInstance;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormFactoryInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Siestacat\UploadChunkBundle\Document\UploadChunkRequestFilePart;
-use Siestacat\UploadChunkBundle\Repository\UploadChunkRequestFileRepository;
+use Siestacat\UploadChunkBundle\Document\File;
+use Siestacat\UploadChunkBundle\Document\FilePart;
+use Siestacat\UploadChunkBundle\Document\Request;
 use Siestacat\UploadChunkBundle\Service\DestroyRequest;
 use Siestacat\UploadChunkBundle\Service\FetchDir;
 use Siestacat\UploadChunkBundle\Service\RequestSession;
@@ -22,7 +21,6 @@ class RequestUpload
     (
         private RequestStack $requestStack,
         private FormFactoryInterface $formFactory,
-        private UploadChunkRequestFileRepository $uploadChunkRequestFileRepository,
         private DocumentManager $documentManager,
         private RequestSession $requestSessionService,
         private DestroyRequest $destroyRequestService,
@@ -85,9 +83,9 @@ class RequestUpload
         
     }
 
-    private function createRequestDocument(mixed $extra_data = null):UploadChunkRequest
+    private function createRequestDocument(mixed $extra_data = null):Request
     {
-        $request_document = new UploadChunkRequest();
+        $request_document = new Request();
 
         $request_document->setExtraData($extra_data);
 
@@ -97,9 +95,9 @@ class RequestUpload
     }
 
     /**
-     * @return UploadChunkRequestFilePart[]
+     * @return FilePart[]
      */
-    private function persistFileParts(UploadChunkRequestFile $file_document):array
+    private function persistFileParts(File $file_document):array
     {
 
         $parts = [];
@@ -108,7 +106,7 @@ class RequestUpload
 
         for($part_index = 1; $part_index <= $file_document->parts_count; $part_index++)
         {
-            $part_document = new UploadChunkRequestFilePart;
+            $part_document = new FilePart;
 
             $part_document->request_id = $file_document->request_id;
 
