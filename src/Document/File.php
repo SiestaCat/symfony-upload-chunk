@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace Siestacat\UploadChunkBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
