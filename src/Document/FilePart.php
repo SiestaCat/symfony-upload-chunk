@@ -20,22 +20,22 @@ class FilePart
     #[MongoDB\Field(type: 'string')]
     public ?string $file_native_id = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public int $index;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public ?int $size = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public ?int $start = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public ?int $end = null;
 
     #[MongoDB\Field(type: 'string')]
     public ?string $tmp_path = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public int $is_done = 0;
 
     public function setIsDone(int $is_done):self

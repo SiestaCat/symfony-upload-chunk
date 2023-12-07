@@ -26,19 +26,19 @@ class File
     #[MongoDB\Field(type: 'string')]
     public string $name;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public int $size;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public ?int $chunk_size = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public ?int $parts_count = null;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public int $parts_uploaded = 0;
 
-    #[MongoDB\Field(type: 'integer')]
+    #[MongoDB\Field(type: 'int')]
     public int $is_done = 0;
 
     #[MongoDB\Field(type: 'string')]
