@@ -56,9 +56,10 @@ class Process
                 {
                     $this->joinChunkedFiles($instance->file);
 
-                    $this->fileRepository->documentManager->createQueryBuilder(FilePart::class)
+                    $this->fileRepository->documentManager->createQueryBuilder(File::class)
                     ->findAndUpdate()
-                    ->field('id')->equals($instance->file->id)
+                    ->field('request_id')->equals($instance->file->request_id)
+                    ->field('file_id')->equals($instance->file->file_id)
                     ->field('is_done')->set(1)
                     ->getQuery()
                     ->execute();
