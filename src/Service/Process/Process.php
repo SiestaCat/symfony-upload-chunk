@@ -52,7 +52,19 @@ class Process
 
                 $instance->file = $this->fileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
 
-                $this->joinChunkedFiles($instance->file);
+                if($instance->file->is_done === 0)
+                {
+                    $this->joinChunkedFiles($instance->file);
+
+                    $this->fileRepository->documentManager->createQueryBuilder(FilePart::class)
+                    ->findAndUpdate()
+                    ->field('id')->equals($instance->file->id)
+                    ->field('is_done')->set(1)
+                    ->getQuery()
+                    ->execute();
+                }
+
+                
             }
 
             return $instance;
@@ -71,10 +83,15 @@ class Process
 
     public function postProcess(ProcessInstance $instance):int
     {
-        $this->fileRepository->deleteFile($instance->file);
+        return $this->postProcessFile($instance->file);
+    }
+
+    public function postProcessFile(File $file):int
+    {
+        $this->fileRepository->deleteFile($file);
         $this->fileRepository->documentManager->flush();
 
-        return $this->processRequestService->getRequestIdStatus($instance->data->request_id);
+        return $this->processRequestService->getRequestIdStatus($file->request_id);
     }
 
     private function joinChunkedFiles(File $file)
