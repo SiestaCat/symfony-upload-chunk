@@ -37,11 +37,17 @@ class UploadChunkExtension extends Extension implements PrependExtensionInterfac
     private function prependDoctrineMongoDbExtension(ContainerBuilder $container, YamlFileLoader $loader):void
     {
 
-        $yamlParser = new YamlParser();
+        $configs = $container->getExtensionConfig('doctrine_mongodb');
 
-        $config = $yamlParser->parseFile(self::CONFIG_DIR . '/packages/doctrine_mongodb.yaml');
+        $doctrine_mongodb_config = $configs[0];
 
-        $container->prependExtensionConfig('doctrine_mongodb', $config['doctrine_mongodb']);
+        $doctrine_mongodb_config['document_managers']['default']['mappings']['UploadChunkBundle'] = [
+            'is_bundle' => true,
+            'prefix' => 'Siestacat\UploadChunkBundle\Document',
+            'alias' => 'UploadChunkBundle'
+        ];
+
+        $container->prependExtensionConfig('doctrine_mongodb', $doctrine_mongodb_config);
     }
 
     public function getAlias():string

@@ -1,9 +1,0 @@
-doctrine_mongodb:
-    document_managers:
-        upload_chunk:
-            connection: default
-            mappings:
-                UploadChunkBundle:
-                    is_bundle: true
-                    prefix: 'Siestacat\UploadChunkBundle\Document'
-                    alias: UploadChunkBundle
