@@ -20,6 +20,13 @@ class FileRepository extends ServiceDocumentRepository
         return $this->findOneBy(['request_id' => $request_id, 'file_id' => $file_id]);
     }
 
+    public function getRequestPendingCount(string $request_id):int
+    {
+        return $this->documentManager->createQueryBuilder(File::class)
+        ->field('request_id')->equals($request_id)
+        ->count()->getQuery()->execute();
+    }
+
     public function deleteByRequestId(string $request_id, int $clear_at):void
     {
         /**

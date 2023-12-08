@@ -76,14 +76,12 @@ class Process
         $this->fileRepository->deleteFile($instance->file);
         $this->fileRepository->documentManager->flush();
 
-        $files_pending_count =
-        $this->fileRepository->documentManager->createQueryBuilder(File::class)
-        ->field('request_id')->equals($instance->data->request_id)
-        ->count()->getQuery()->execute();
+        return $this->getStatus($instance);
+    }
 
-        if(!is_int($files_pending_count)) throw new \Exception('Doctrine ODM count response is not int');
-
-        if($files_pending_count === 0)
+    public function getStatus(ProcessInstance $instance):int
+    {
+        if($this->fileRepository->getRequestPendingCount($instance->data->request_id) === 0)
         {
             $this->destroyRequestService->destroy($instance->request->request_id);
             return self::POST_PROCESS_FULLY_PROCESSED;
