@@ -2,7 +2,7 @@
 
 namespace Siestacat\UploadChunkBundle\Form\ProcessRequest;
 
-use Siestacat\UploadChunkBundle\Form\Process\Data\ProcessRequestData;
+use Siestacat\UploadChunkBundle\Form\ProcessRequest\Data\ProcessRequestData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

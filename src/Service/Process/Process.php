@@ -41,14 +41,13 @@ class Process
                 $data
             );
 
-            if(!$instance->form->isValid() && $instance->data)
+            if($instance->form && !$instance->form->isValid() && $instance->data)
             {
                 $this->destroyRequestService->destroy($instance->data->request_id);
             }
 
-            if($instance->form->isValid())
+            if(($instance->form && $instance->form->isValid()) || $instance->form === null)
             {
-
                 $instance->request = $this->requestRepository->findOneBy(['request_id' => $instance->data->request_id]);
 
                 $instance->file = $this->fileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
