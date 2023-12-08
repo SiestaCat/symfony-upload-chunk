@@ -48,8 +48,6 @@ class UploadPart
             if($instance->form->isValid())
             {
                 $part = $this->filePartRepository->fetchOne($instance->data->request_id, $instance->data->file_id, $instance->data->part_index);
-
-                $file = $this->fileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
                 
                 if($part->is_done === 0)
                 {
@@ -72,6 +70,10 @@ class UploadPart
                     ->getQuery()
                     ->execute();
                 }
+
+                $instance->file = $this->fileRepository->fetchOne($instance->data->request_id, $instance->data->file_id);
+
+                $instance->is_done = $this->filePartRepository->isFileDone($instance->file);
             }
 
             return $instance;

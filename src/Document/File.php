@@ -36,9 +36,6 @@ class File
     public ?int $parts_count = null;
 
     #[MongoDB\Field(type: 'int')]
-    public int $parts_uploaded = 0;
-
-    #[MongoDB\Field(type: 'int')]
     public int $is_done = 0;
 
     #[MongoDB\Field(type: 'string')]

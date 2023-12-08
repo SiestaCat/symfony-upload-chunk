@@ -5,6 +5,7 @@ namespace Siestacat\UploadChunkBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
+use Siestacat\UploadChunkBundle\Document\File;
 use Siestacat\UploadChunkBundle\Document\FilePart;
 use Siestacat\UnlinkNoEmptyFolder\ClearFolderAfterUnlink;
 
@@ -24,6 +25,18 @@ class FilePartRepository extends ServiceDocumentRepository
     public function fetchOne(string $request_id, string $file_native_id, int $index):?FilePart
     {
         return $this->findOneBy(['request_id' => $request_id, 'file_native_id' => $file_native_id, 'index' => $index]);
+    }
+
+    public function isFileDone(File $file):bool
+    {
+        $parts_uploaded =
+        $this->documentManager->createQueryBuilder(FilePart::class)
+        ->field('request_id')->equals($file->request_id)
+        ->field('file_native_id')->equals($file->file_id)
+        ->field('is_done')->equals(1)
+        ->count()->getQuery()->execute();
+
+        return $parts_uploaded >= $file->parts_count;
     }
 
     public function deleteByRequestId(string $request_id, int $clear_at):void
