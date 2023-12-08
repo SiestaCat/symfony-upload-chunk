@@ -16,10 +16,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Process
 {
-
-    const POST_PROCESS_HAS_PENDING_FILES    = 0;
-    const POST_PROCESS_FULLY_PROCESSED      = 1;
-
     public function __construct
     (
         private RequestStack $requestStack,
@@ -28,7 +24,8 @@ class Process
         private FileRepository $fileRepository,
         private FilePartRepository $filePartRepository,
         private KernelInterface $kernel,
-        private DestroyRequest $destroyRequestService
+        private DestroyRequest $destroyRequestService,
+        private ProcessRequest $processRequestService
     )
     {}
 
@@ -76,18 +73,7 @@ class Process
         $this->fileRepository->deleteFile($instance->file);
         $this->fileRepository->documentManager->flush();
 
-        return $this->getStatus($instance);
-    }
-
-    public function getStatus(ProcessInstance $instance):int
-    {
-        if($this->fileRepository->getRequestPendingCount($instance->data->request_id) === 0)
-        {
-            $this->destroyRequestService->destroy($instance->request->request_id);
-            return self::POST_PROCESS_FULLY_PROCESSED;
-        }
-
-        return self::POST_PROCESS_HAS_PENDING_FILES;
+        return $this->processRequestService->getRequestIdStatus($instance->data->request_id);
     }
 
     private function joinChunkedFiles(File $file)
