@@ -15,9 +15,11 @@ class ProcessInstance
 
     public ?Request $request = null;
 
-    public function __construct(public FormInterface $form)
+    public function __construct(public ?FormInterface $form, ?ProcessData $data = null)
     {
-        $this->data = $this->form->getData();
+        if($this->form === null && $data === null) throw new \Exception('Data cannot be null');
+        
+        $this->data = $form !== null ? $this->form->getData() : $data;
     }
     
 }

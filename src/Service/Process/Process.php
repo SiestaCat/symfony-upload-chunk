@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Siestacat\UploadChunkBundle\Repository\FileRepository;
 use Siestacat\UploadChunkBundle\Document\File;
 use Siestacat\UploadChunkBundle\Document\FilePart;
+use Siestacat\UploadChunkBundle\Form\Process\Data\ProcessData;
 use Siestacat\UploadChunkBundle\Form\Process\ProcessType;
 use Siestacat\UploadChunkBundle\Repository\FilePartRepository;
 use Siestacat\UploadChunkBundle\Repository\RequestRepository;
@@ -29,14 +30,15 @@ class Process
     )
     {}
 
-    public function process():ProcessInstance
+    public function process(?ProcessData $data = null):ProcessInstance
     {
 
         try
         {
             $instance = new ProcessInstance
             (
-                $this->formFactory->create(ProcessType::class)->handleRequest($this->requestStack->getCurrentRequest())
+                $data === null ? $this->formFactory->create(ProcessType::class)->handleRequest($this->requestStack->getCurrentRequest()) : null,
+                $data
             );
 
             if(!$instance->form->isValid() && $instance->data)
