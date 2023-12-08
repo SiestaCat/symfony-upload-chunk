@@ -24,42 +24,32 @@ class ProcessRequest
     )
     {}
 
-    public function getProcessRequest():?ProcessRequestInstance
+    public function getProcessRequest():ProcessRequestInstance
     {
         try
         {
-            $form = $this->formFactory->create(ProcessRequestType::class)->handleRequest($this->requestStack->getCurrentRequest());
 
-            /**
-             * @var ?string
-             */
-            $request_id = $form->get('request_id') ? $form->get('request_id')->getData() : null;
+            $instance = new ProcessRequestInstance($this->formFactory->create(ProcessRequestType::class)->handleRequest($this->requestStack->getCurrentRequest()));
 
-            if(!$form->isValid() && $request_id !== null)
+            $ok = $instance->form->isValid() && $instance->request_id !== null;
+
+            if(!$ok)
             {
-                $this->destroyRequestService->destroy($request_id);
+                $this->destroyRequestService->destroy($instance->request_id);
             }
 
-            if($form->isValid())
+            if($ok)
             {
-                $pending_count = $this->getPendingCount($request_id);
-
-                $instance = new ProcessRequestInstance
-                (
-                    $request_id,
-                    $this->getStatusByCount($pending_count),
-                    $pending_count
-                );
+                $instance->pending_count = $this->getPendingCount($instance->request_id);
+                $instance->status = $this->getStatusByCount($instance->pending_count);
 
                 if($instance->status === self::POST_PROCESS_FULLY_PROCESSED)
                 {
-                    $this->destroyRequestService->destroy($request_id);
+                    $this->destroyRequestService->destroy($instance->request_id);
                 }
-
-                return $instance;
             }
 
-            return null;
+            return $instance;
         }
         catch(\Exception $e)
         {
