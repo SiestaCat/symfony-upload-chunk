@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Siestacat\UploadChunkBundle\Repository\FileRepository;
 use Siestacat\UploadChunkBundle\Form\ProcessRequest\ProcessRequestType;
 use Siestacat\UploadChunkBundle\Service\DestroyRequest;
+use Siestacat\UploadChunkBundle\Service\Process\Data\ProcessRequestInstance;
 
 class ProcessRequest
 {
@@ -23,7 +24,7 @@ class ProcessRequest
     )
     {}
 
-    public function getStatus():int
+    public function getProcessRequest():?ProcessRequestInstance
     {
         try
         {
@@ -41,10 +42,24 @@ class ProcessRequest
 
             if($form->isValid())
             {
-                return $this->getRequestIdStatus($request_id);
+                $pending_count = $this->getPendingCount($request_id);
+
+                $instance = new ProcessRequestInstance
+                (
+                    $request_id,
+                    $this->getStatusByCount($pending_count),
+                    $pending_count
+                );
+
+                if($instance->status === self::POST_PROCESS_FULLY_PROCESSED)
+                {
+                    $this->destroyRequestService->destroy($request_id);
+                }
+
+                return $instance;
             }
 
-            return self::POST_PROCESS_HAS_PENDING_FILES;
+            return null;
         }
         catch(\Exception $e)
         {
@@ -58,14 +73,18 @@ class ProcessRequest
         }
     }
 
+    public function getPendingCount(string $request_id):int
+    {
+        return $this->fileRepository->getRequestPendingCount($request_id);
+    }
+
+    public function getStatusByCount(int $pending_count):int
+    {
+        return $pending_count === 0 ? self::POST_PROCESS_FULLY_PROCESSED : self::POST_PROCESS_HAS_PENDING_FILES;
+    }
+
     public function getRequestIdStatus(?string $request_id):int
     {
-        if($request_id !== null && $this->fileRepository->getRequestPendingCount($request_id) === 0)
-        {
-            $this->destroyRequestService->destroy($request_id);
-            return self::POST_PROCESS_FULLY_PROCESSED;
-        }
-
-        return self::POST_PROCESS_HAS_PENDING_FILES;
+        return $request_id === null ? self::POST_PROCESS_HAS_PENDING_FILES : $this->getStatusByCount($this->getPendingCount($request_id));
     }
 }
