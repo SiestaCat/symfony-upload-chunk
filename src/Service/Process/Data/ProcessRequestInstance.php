@@ -3,13 +3,16 @@
 namespace Siestacat\UploadChunkBundle\Service\Process\Data;
 
 use Siestacat\UploadChunkBundle\Document\Request;
+use Siestacat\UploadChunkBundle\Form\ProcessRequest\Data\ProcessRequestData;
 use Siestacat\UploadChunkBundle\Service\Process\ProcessRequest;
 use Symfony\Component\Form\FormInterface;
 
 class ProcessRequestInstance
 {
 
-    public ?string $request_id = null;
+    public ?ProcessRequestData $data = null;
+
+    public ?Request $request = null;
 
     public int $status = ProcessRequest::POST_PROCESS_HAS_PENDING_FILES;
 
@@ -17,7 +20,7 @@ class ProcessRequestInstance
 
     public function __construct(public FormInterface $form)
     {
-        $this->request_id = $this->form->isSubmitted() && $this->form->isValid() && $this->form->get('request_id') ? $this->form->get('request_id')->getData() : null;
+        $this->data = $this->form->getData();
     }
     
 }

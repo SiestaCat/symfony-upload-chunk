@@ -8,6 +8,7 @@ use Siestacat\UploadChunkBundle\Repository\FileRepository;
 use Siestacat\UploadChunkBundle\Form\ProcessRequest\ProcessRequestType;
 use Siestacat\UploadChunkBundle\Service\DestroyRequest;
 use Siestacat\UploadChunkBundle\Service\Process\Data\ProcessRequestInstance;
+use Siestacat\UploadChunkBundle\Repository\RequestRepository;
 
 class ProcessRequest
 {
@@ -20,7 +21,8 @@ class ProcessRequest
         private RequestStack $requestStack,
         private FormFactoryInterface $formFactory,
         private FileRepository $fileRepository,
-        private DestroyRequest $destroyRequestService
+        private DestroyRequest $destroyRequestService,
+        private RequestRepository $requestRepository
     )
     {}
 
@@ -28,24 +30,23 @@ class ProcessRequest
     {
         try
         {
-
             $instance = new ProcessRequestInstance($this->formFactory->create(ProcessRequestType::class)->handleRequest($this->requestStack->getCurrentRequest()));
 
-            $ok = $instance->form->isValid() && $instance->request_id !== null;
-
-            if(!$ok)
+            if(!$instance->form->isValid())
             {
-                $this->destroyRequestService->destroy($instance->request_id);
+                $this->destroyRequestService->destroy($instance->data->request_id);
             }
 
-            if($ok)
+            if($instance->form->isValid())
             {
-                $instance->pending_count = $this->getPendingCount($instance->request_id);
+                $instance->request = $this->requestRepository->findOneBy(['request_id' => $instance->data->request_id]);
+
+                $instance->pending_count = $this->getPendingCount($instance->request->request_id);
                 $instance->status = $this->getStatusByCount($instance->pending_count);
 
                 if($instance->status === self::POST_PROCESS_FULLY_PROCESSED)
                 {
-                    $this->destroyRequestService->destroy($instance->request_id);
+                    $this->destroyRequestService->destroy($instance->request->request_id);
                 }
             }
 
