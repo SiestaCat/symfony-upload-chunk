@@ -24,6 +24,7 @@ class FileRepository extends ServiceDocumentRepository
     {
         return $this->documentManager->createQueryBuilder(File::class)
         ->field('request_id')->equals($request_id)
+        ->field('is_done')->equals(0)
         ->count()->getQuery()->execute();
     }
 
